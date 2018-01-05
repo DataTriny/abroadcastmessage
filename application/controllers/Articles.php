@@ -1,0 +1,56 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Articles extends CI_Controller
+{
+	public function __construct()
+	{
+		parent::__construct();
+		$this->load->library('form_validation');
+		$this->load->library('markdown');
+		$this->load->model('articles_model');
+	}
+	
+	public function create()
+	{
+		if (!isset($this->session->isAdmin) || !$this->session->isAdmin)
+			redirect('/');
+		$this->form_validation->set_rules('title', 'Title', 'required|max_length[255]');
+		$this->form_validation->set_rules('content', 'Content', 'required');
+		if (!$this->form_validation->run())
+			$this->template->load('articles/create', ['title' => 'Create a new article']);
+		else
+		{
+			$slug = $this->articles_model->create($this->session->userId);
+			redirect('/' . $slug);
+		}
+	}
+	
+	public function index()
+	{
+		$data['articles'] = $this->articles_model->getAll();
+		$data['title'] = 'All articles';
+		$this->template->load('articles/index', $data);
+	}
+	
+	public function read($slug)
+	{
+		$data['article'] = $this->articles_model->getBySlug($slug);
+		if (is_null($data['article']))
+			show_404();
+		$data['authorName'] = $data['article']['username'];
+		if (!is_null($data['article']['first_name']) && !is_null($data['article']['last_name']))
+			$data['authorName'] = $data['article']['first_name'] . ' ' . $data['article']['last_name'];
+		$data['article']['content'] = $this->markdown->parse($data['article']['content']);
+		$data['title'] = $data['article']['title'];
+		$this->load->model('comments_model');
+		if (isset($this->session->fullName))
+		{
+			$this->form_validation->set_rules('comment', 'Comment', 'required');
+			if ($this->form_validation->run())
+				$this->comments_model->create($data['article']['id'], $this->session->userId);
+		}
+		$data['comments'] = $this->comments_model->getByArticle($slug);
+		$this->template->load('articles/read', $data);
+	}
+}
