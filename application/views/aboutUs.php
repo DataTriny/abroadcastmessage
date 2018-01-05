@@ -1,1 +1,1 @@
-<h1>Abous us</h1>
+<h1>About us</h1>
