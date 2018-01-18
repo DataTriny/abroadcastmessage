@@ -1,7 +1,18 @@
 <article>
 	<h1><?php echo $article['title']; ?></h1>
-	<p>Posted on <?php echo date('d/m/Y', strtotime($article['creation_date'])); ?> by <?php echo $authorName; ?>.</p>
-	<?php echo $article['content']; ?>
+	<p>Posted by <?php echo $authorName; ?> on <?php echo date('d/m/Y', strtotime($article['creation_date'])); ?> in <?php echo anchor('search?category=' . $article['category_slug'], $article['category_name']); ?>.</p>
+	<?php if (count($tags) > 0)
+	{
+		echo '<p>Tagged as:';
+		for ($i = 0; $i < count($tags); $i++)
+		{
+			if ($i > 0)
+				echo ', ';
+			echo anchor('search?tags=' . $tags[$i]['name'], $tags[$i]['name']);
+		}
+		echo '</p>';
+	}
+	echo $article['content']; ?>
 </article>
 <h1 id="comments">Comments (<?php echo count($comments); ?>)</h1>
 <?php if (isset($_SESSION['fullName']))

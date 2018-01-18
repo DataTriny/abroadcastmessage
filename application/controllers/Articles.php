@@ -9,16 +9,20 @@ class Articles extends CI_Controller
 		$this->load->library('form_validation');
 		$this->load->library('markdown');
 		$this->load->model('articles_model');
+		$this->load->model('categories_model');
 	}
 	
 	public function create()
 	{
 		if (!isset($this->session->isAdmin) || !$this->session->isAdmin)
+		{
 			redirect('/');
+		}
 		$this->form_validation->set_rules('title', 'Title', 'required|max_length[255]');
 		$this->form_validation->set_rules('content', 'Content', 'required');
+		$this->form_validation->set_rules('category', 'Category', 'required');
 		if (!$this->form_validation->run())
-			$this->template->load('articles/create', ['title' => 'Create a new article']);
+			$this->template->load('articles/create', ['categories' => $this->categories_model->getAll(), 'title' => 'Create a new article']);
 		else
 		{
 			$slug = $this->articles_model->create($this->session->userId);
@@ -29,6 +33,7 @@ class Articles extends CI_Controller
 	public function index()
 	{
 		$data['articles'] = $this->articles_model->getAll();
+		$data['categories'] = $this->categories_model->getAll();
 		$data['title'] = 'All articles';
 		$this->template->load('articles/index', $data);
 	}
@@ -42,6 +47,8 @@ class Articles extends CI_Controller
 		if (!is_null($data['article']['first_name']) && !is_null($data['article']['last_name']))
 			$data['authorName'] = $data['article']['first_name'] . ' ' . $data['article']['last_name'];
 		$data['article']['content'] = $this->markdown->parse($data['article']['content']);
+		$this->load->model('tags_model');
+		$data['tags'] = $this->tags_model->getAllFor($data['article']['id']);
 		$data['title'] = $data['article']['title'];
 		$this->load->model('comments_model');
 		if (isset($this->session->fullName))
