@@ -15,7 +15,7 @@ class Categories extends CI_Controller
 		if ($this->form_validation->run())
 		{
 			$this->categories_model->create();
-			redirect('/');
+			redirect('articles/create');
 		}
 		else
 			$this->template->load('createCategory', ['title' => 'Create a category']);

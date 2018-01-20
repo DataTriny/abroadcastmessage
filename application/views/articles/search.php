@@ -1,5 +1,5 @@
 <?php
-echo form_open('search'); ?>
+echo form_open('search', ['method' => 'GET']); ?>
 	<label for="query">Search for:</label>
 	<input type="search" id="query" name="query" placeholder="Keywords" />
 	<label for="category">in:</label>

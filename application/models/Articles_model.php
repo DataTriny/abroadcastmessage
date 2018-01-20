@@ -56,4 +56,34 @@ class Articles_model extends CI_Model
 		$query = $this->db->get('articles', $limit);
 		return $query->result_array();
 	}
+	
+	public function search($category, $tags)
+	{
+		$this->db->select('articles.id, articles.title, articles.slug, articles.content, articles.creation_date, users.username, users.first_name, users.last_name, count(comments.id) comments, categories.name category_name, categories.slug category_slug');
+		$this->db->join('articles', 'tagged_as.article_id = articles.id');
+		$this->db->join('users', 'articles.author_id = users.id');
+		$this->db->join('comments', 'articles.id = comments.article_id', 'left');
+		$this->db->join('categories', 'articles.category_id = categories.id');
+		$condition = '';
+		if (!is_null($category))
+			$condition = 'articles.category_id = ' . $category['id'];
+		if (count($tags) > 0)
+		{
+			if (!empty($condition))
+				$condition .= ' AND ';
+			$condition .= 'tagged_as.tag_id IN (';
+			for ($i = 0; $i < count($tags); $i++)
+			{
+				if ($i > 0)
+					$condition .= ', ';
+				$condition .= $tags[$i]['id'];
+			}
+			$condition .= ')';
+		}
+		if (!empty($condition))
+			$this->db->where($condition);
+		$this->db->group_by('articles.id');
+		$this->db->order_by('articles.id', 'desc');
+		return $this->db->get('tagged_as')->result_array();
+	}
 }

@@ -18,6 +18,19 @@ class Tags_model extends CI_Model
 		return $this->db->insert('categories', $data);
 	}
 
+	public function get($query)
+	{
+		$names = explode(' ', $query);
+		$query = '';
+		for ($i = 0; $i < count($names); $i++)
+		{
+			if ($i > 0)
+				$query .= ', ';
+			$query .= '"' . $names[$i] . '"';
+		}
+		return $this->db->get_where('tags', 'name IN (' . $query . ')')->result_array();
+	}
+	
 	public function getAllFor($articleId)
 	{
 		$this->db->select('id, name');

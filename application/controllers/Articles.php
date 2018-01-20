@@ -10,6 +10,7 @@ class Articles extends CI_Controller
 		$this->load->library('markdown');
 		$this->load->model('articles_model');
 		$this->load->model('categories_model');
+		$this->load->model('tags_model');
 	}
 	
 	public function create()
@@ -35,11 +36,12 @@ class Articles extends CI_Controller
 		$data['articles'] = $this->articles_model->getAll();
 		$data['categories'] = $this->categories_model->getAll();
 		$data['title'] = 'All articles';
-		$this->template->load('articles/index', $data);
+		$this->template->load('articles/search', $data);
 	}
 	
 	public function read($slug)
 	{
+		echo $slug;
 		$data['article'] = $this->articles_model->getBySlug($slug);
 		if (is_null($data['article']))
 			show_404();
@@ -59,5 +61,15 @@ class Articles extends CI_Controller
 		}
 		$data['comments'] = $this->comments_model->getByArticle($slug);
 		$this->template->load('articles/read', $data);
+	}
+	
+	public function search()
+	{
+		$tags = $this->tags_model->get($this->input->get('query'));
+		$data['articles'] = $this->articles_model->search($this->categories_model->get($this->input->get('category')), $tags);
+		$data['categories'] = $this->categories_model->getAll();
+		$data['search'] = true;
+		$data['title'] = 'Search results';
+		$this->template->load('articles/search', $data);
 	}
 }

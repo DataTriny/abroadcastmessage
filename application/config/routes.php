@@ -55,6 +55,7 @@ $route['articles/create'] = 'articles/create';
 $route['log-in'] = 'users/logIn';
 $route['log-out'] = 'users/logOut';
 $route['sign-up'] = 'users/signUp';
+$route['search'] = 'articles/search';
 $route['(:any)'] = 'articles/read/$1';
 $route['default_controller'] = 'home';
 $route['404_override'] = '';

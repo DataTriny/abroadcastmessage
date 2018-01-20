@@ -18,6 +18,11 @@ class Categories_model extends CI_Model
 		return $this->db->insert('categories', $data);
 	}
 
+	public function get($slug)
+	{
+		return $this->db->get_where('categories', ['slug' => $slug])->row_array();
+	}
+	
 	public function getAll()
 	{
 		$this->db->order_by('name');
