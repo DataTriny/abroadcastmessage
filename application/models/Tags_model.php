@@ -28,7 +28,10 @@ class Tags_model extends CI_Model
 				$query .= ', ';
 			$query .= '"' . $names[$i] . '"';
 		}
-		return $this->db->get_where('tags', 'name IN (' . $query . ')')->result_array();
+		$results = $this->db->get_where('tags', 'name IN (' . $query . ')')->result_array();
+		if (count($results) == 0 && count($names) > 0)
+			$results = [null];
+		return $results;
 	}
 	
 	public function getAllFor($articleId)

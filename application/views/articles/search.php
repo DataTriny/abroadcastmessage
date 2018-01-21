@@ -6,7 +6,12 @@ echo form_open('search', ['method' => 'GET']); ?>
 	<select id="category" name="category">
 		<option value="all">All categories</option>
 		<?php foreach ($categories as $category)
-			echo '<option value="' . $category['slug'] . '">' . $category['name'] . '</option>';
+		{
+			echo '<option value="' . $category['slug'] . '"';
+			if (set_value('category') == $category['slug'])
+				echo ' selected';
+			echo '>' . $category['name'] . '</option>';
+		}
 	?></select>
 	<input type="submit" class="formButton" value="Go" />
 </form>
@@ -18,23 +23,23 @@ echo count($articles) . ')</h1>';
 if (isset($_SESSION['isAdmin']) && $_SESSION['isAdmin'])
 	echo anchor('/articles/create', 'Create new article');
 if (count($articles) == 0)
-	echo '<p>Nothing to show yet.</p>';
+	echo '<p>Nothing to show.</p>';
 else
 {
-	echo '<ul>';
+	echo '<ul id="articles">';
 	foreach ($articles as $article)
 	{
 		$authorName = $article['username'];
 		if (!is_null($article['first_name']) && !is_null($article['last_name']))
 			$authorName = $article['first_name'] . ' ' . $article['last_name'];
-		echo '<li><h2>' . anchor('/' . $article['slug'], $article['title']) . '</h2>
-		<p>Posted by ' . $authorName . ' on ' . date('d/m/Y', strtotime($article['creation_date'])) . ' in ' . anchor('search?category=' . $article['category_slug'], $article['category_name']) . '.<br />';
-		if ($article['comments'] == 0)
-			echo anchor('/' . $article['slug'] . '#comments', 'No comment.');
-		else if ($article['comments'] == 1)
-			echo anchor('/' . $article['slug'] . '#comments', '1 comment.');
-		else
-			echo anchor('/' . $article['slug'] . '#comments', $article['comments'] . ' comments.');
+		echo '<li><h2>' . anchor('/' . $article['slug'], $article['title']) . '</h2>';
+		echo '<p>Posted by ' . anchor('about/' . $article['username'], $authorName) . ' on ' . date('d/m/Y', strtotime($article['creation_date'])) . ' in ' . anchor('search?category=' . $article['category_slug'], $article['category_name']) . '.';
+		$text = 'No comment.';
+		if ($article['comments'] == 1)
+			$text = '1 comment.';
+		else if ($article['comments'] > 1)
+			$text = $article['comments'] . ' comments.';
+		echo anchor($article['slug'] . '#comments', $text, ['class' => 'goToComments']);
 		echo '</p></li>';
 	}
 	echo '</ul>';

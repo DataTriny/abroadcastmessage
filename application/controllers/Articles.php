@@ -17,7 +17,9 @@ class Articles extends CI_Controller
 	{
 		if (!isset($this->session->isAdmin) || !$this->session->isAdmin)
 		{
-			redirect('/');
+			$this->session->set_flashdata('message', 'You must log in as administrator to post an article.');
+			$this->session->set_flashdata('redirectTo', current_url());
+			redirect('log-in');
 		}
 		$this->form_validation->set_rules('title', 'Title', 'required|max_length[255]');
 		$this->form_validation->set_rules('content', 'Content', 'required');
@@ -27,7 +29,8 @@ class Articles extends CI_Controller
 		else
 		{
 			$slug = $this->articles_model->create($this->session->userId);
-			redirect('/' . $slug);
+			$this->session->set_flashdata('message', 'Your article has been posted successfully!');
+			redirect($slug);
 		}
 	}
 	
@@ -45,6 +48,7 @@ class Articles extends CI_Controller
 		$data['article'] = $this->articles_model->getBySlug($slug);
 		if (is_null($data['article']))
 			show_404();
+		$this->articles_model->read($data['article']);
 		$data['authorName'] = $data['article']['username'];
 		if (!is_null($data['article']['first_name']) && !is_null($data['article']['last_name']))
 			$data['authorName'] = $data['article']['first_name'] . ' ' . $data['article']['last_name'];
@@ -57,8 +61,13 @@ class Articles extends CI_Controller
 		{
 			$this->form_validation->set_rules('comment', 'Comment', 'required');
 			if ($this->form_validation->run())
+			{
 				$this->comments_model->create($data['article']['id'], $this->session->userId);
+				$this->session->set_flashdata('message', 'Your comment has been posted successfully!');
+			}
 		}
+		else
+			$this->session->set_flashdata('redirectTo', current_url());
 		$data['comments'] = $this->comments_model->getByArticle($slug);
 		$this->template->load('articles/read', $data);
 	}

@@ -1,6 +1,6 @@
 <article>
 	<h1><?php echo $article['title']; ?></h1>
-	<p>Posted by <?php echo $authorName; ?> on <?php echo date('d/m/Y', strtotime($article['creation_date'])); ?> in <?php echo anchor('search?category=' . $article['category_slug'], $article['category_name']); ?>.</p>
+	<p>Posted by <?php echo anchor('about/' . $article['username'], $authorName); ?> on <?php echo date('d/m/Y', strtotime($article['creation_date'])); ?> in <?php echo anchor('search?category=' . $article['category_slug'], $article['category_name']); ?>.</p>
 	<?php if (count($tags) > 0)
 	{
 		echo '<p>Tagged as:';

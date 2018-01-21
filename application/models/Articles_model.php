@@ -18,14 +18,15 @@ class Articles_model extends CI_Model
 			'content' => $this->input->post('content'),
 			'creation_date' => date('Y-m-d'),
 			'author_id' => $authorId,
-			'category_id' => $this->input->post('category')];
+			'category_id' => $this->input->post('category'),
+			'views' => 0];
 		$this->db->insert('articles', $data);
 		return $data['slug'];
 	}
 	
 	public function getAll()
 	{
-		$this->db->select('articles.id, articles.title, articles.slug, articles.content, articles.creation_date, users.username, users.first_name, users.last_name, count(comments.id) comments, categories.name category_name, categories.slug category_slug');
+		$this->db->select('articles.id, articles.title, articles.slug, articles.content, articles.creation_date, articles.views, users.username, users.first_name, users.last_name, count(comments.id) comments, categories.name category_name, categories.slug category_slug');
 		$this->db->join('users', 'articles.author_id = users.id');
 		$this->db->join('comments', 'articles.id = comments.article_id', 'left');
 		$this->db->join('categories', 'articles.category_id = categories.id');
@@ -37,7 +38,7 @@ class Articles_model extends CI_Model
 	
 	public function getBySlug($slug)
 	{
-		$this->db->select('articles.id, articles.title, articles.slug, articles.content, articles.creation_date, users.username, users.first_name, users.last_name, categories.name category_name, categories.slug category_slug');
+		$this->db->select('articles.id, articles.title, articles.slug, articles.content, articles.creation_date, articles.views, users.username, users.first_name, users.last_name, categories.name category_name, categories.slug category_slug');
 		$this->db->join('users', 'articles.author_id = users.id');
 		$this->db->join('categories', 'articles.category_id = categories.id');
 		$this->db->where('articles.slug', $slug);
@@ -47,7 +48,7 @@ class Articles_model extends CI_Model
 	
 	public function getLatest($limit)
 	{
-		$this->db->select('articles.id, articles.title, articles.slug, articles.content, articles.creation_date, users.username, users.first_name, users.last_name, count(comments.id) comments, categories.name category_name');
+		$this->db->select('articles.id, articles.title, articles.slug, articles.content, articles.creation_date, articles.views, users.username, users.first_name, users.last_name, count(comments.id) comments, categories.name category_name');
 		$this->db->join('users', 'articles.author_id = users.id');
 		$this->db->join('comments', 'articles.id = comments.article_id', 'left');
 		$this->db->join('categories', 'articles.category_id = categories.id');
@@ -55,6 +56,12 @@ class Articles_model extends CI_Model
 		$this->db->order_by('articles.id', 'desc');
 		$query = $this->db->get('articles', $limit);
 		return $query->result_array();
+	}
+	
+	public function read($article)
+	{
+		$this->db->where('slug', $article['slug']);
+		$this->db->update('articles', ['views' => $article['views'] + 1]);
 	}
 	
 	public function search($category, $tags)
@@ -76,7 +83,10 @@ class Articles_model extends CI_Model
 			{
 				if ($i > 0)
 					$condition .= ', ';
-				$condition .= $tags[$i]['id'];
+				if (!is_null($tags[$i]))
+					$condition .= $tags[$i]['id'];
+				else
+					$condition .= '0';
 			}
 			$condition .= ')';
 		}

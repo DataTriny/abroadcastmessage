@@ -1,0 +1,117 @@
+*
+{
+	font-family: arial;
+	margin: 0;
+	padding: 0;
+}
+body
+{
+	background-color: rgb(150, 150, 150);
+}
+header
+{
+	background-color: rgb(75, 100, 200);
+	color: white;
+	padding: 20px 0;
+}
+header a
+{
+	color: white;
+	text-decoration: none;
+}
+header ul
+{
+	text-align: center;
+}
+header ul li
+{
+	display: inline-block;
+	padding: 10px 0;
+}
+header li a
+{
+	margin: 0 5px;
+	padding: 10px 20px;
+}
+header li a:hover
+{
+	background-color: rgb(50, 75, 150);
+}
+#brand
+{
+	margin-left: 300px;
+}
+#logIn
+{
+	position: absolute;
+	right: 20px;
+	top: 25px;
+}
+#logIn a
+{
+	margin: 0 5px;
+}
+main
+{
+	background-color: white;
+	margin: 0 200px;
+	padding: 20px;
+}
+footer
+{
+	background-color: rgb(200, 200, 200);
+	margin: 0 200px;
+	padding: 20px;
+	text-align: center;
+}
+#message
+{
+	background-color: rgb(200, 125, 75);
+	border-style: 1px solid black;
+	border-radius: 5px;
+	font-weight: bold;
+	margin: 20px 100px 20px 100px;
+	padding: 20px;
+}
+form
+{
+	margin-right: 300px;
+	text-align: right;
+}
+input
+{
+	margin: 10px;
+	padding: 10px;
+	width: 250px;
+}
+select
+{
+	margin: 10px;
+	padding: 10px;
+	width: 250px;
+}
+.formButton
+{
+	width: 150px;
+}
+#articles
+{
+	list-style: none;
+}
+#articles li
+{
+	background-color: rgb(230, 230, 230);
+	border-radius: 3px;
+	margin-top: 15px;
+	padding: 10px;
+}
+#articles li p
+{
+	color: rgb(18, 18, 18);
+	margin-top: 10px;
+}
+.goToComments
+{
+	display: inline-block;
+	float: right;
+}

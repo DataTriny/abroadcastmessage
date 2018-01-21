@@ -18,9 +18,12 @@
 				</ul>
 			</nav>
 		</header>
-		<?php if (isset($_SESSION['message'])) echo '<div id="message">' . $_SESSION['message'] . '</div>'; ?>
 		<main>
-			<?php if (isset($body)) echo $body; ?>
+			<?php
+			if (isset($_SESSION['message']))
+				echo '<div id="message">' . $_SESSION['message'] . '</div>';
+			if (isset($body))
+				echo $body; ?>
 		</main>
 		<footer>
 			<p>&copy; 2018 - Arnold Loubriat, Clément Boussiron and Romain Desjuzeur.<br />All rights reserved.<br />Handcrafted by DataTriny / Arnold Loubriat.</p>

@@ -11,6 +11,8 @@
 		<?php foreach ($categories as $category)
 			echo '<option value="' . $category['id'] . '">' . $category['name'] . '</option>';
 	?></select><br /><?php echo anchor('categories/create', 'Add a category'); ?><br />
+	<label for="tags">Tags (separated by commas):</label>
+	<input type="text" id="tags" name="tags" />
 	<p>Fields marked with * are required.</p><br />
 	<input type="submit" class="formButton" value="Post" />
 </form>
